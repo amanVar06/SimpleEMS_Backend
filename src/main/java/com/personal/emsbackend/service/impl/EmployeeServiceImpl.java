@@ -1,12 +1,16 @@
 package com.personal.emsbackend.service.impl;
 
 import com.personal.emsbackend.dto.EmployeeDto;
+import com.personal.emsbackend.exception.ResourceNotFoundException;
 import com.personal.emsbackend.mapper.EmployeeMapper;
 import com.personal.emsbackend.model.Employee;
 import com.personal.emsbackend.repository.EmployeeRepository;
 import com.personal.emsbackend.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -21,5 +25,23 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee savedEmployee = employeeRepository.save(employee);
 
         return EmployeeMapper.mapToEmployeeDto(savedEmployee);
+    }
+
+    @Override
+    public EmployeeDto getEmployeeById(Long employeeId) throws ResourceNotFoundException {
+
+        Employee employee = employeeRepository
+                .findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee does not exists with given id: " + employeeId));
+
+        return EmployeeMapper.mapToEmployeeDto(employee);
+    }
+
+    @Override
+    public List<EmployeeDto> getAllEmployees() {
+
+        List<Employee> employees = employeeRepository.findAll();
+        return employees.stream().map(EmployeeMapper::mapToEmployeeDto)
+                .collect(Collectors.toList());
     }
 }
