@@ -37,4 +37,13 @@ public class EmployeeController {
         List<EmployeeDto> employeeDtoList = employeeService.getAllEmployees();
         return ResponseEntity.ok(employeeDtoList);
     }
+
+    // Build Update Employee by id REST API
+    @PutMapping("/{id}")
+    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable("id") Long employeeId,
+                                                      @RequestBody EmployeeDto updatedEmployeeDto)
+            throws ResourceNotFoundException {
+        EmployeeDto employeeDto = employeeService.updateEmployee(employeeId, updatedEmployeeDto);
+        return ResponseEntity.ok(employeeDto);
+    }
 }

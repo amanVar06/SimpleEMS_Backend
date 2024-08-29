@@ -32,7 +32,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee employee = employeeRepository
                 .findById(employeeId)
-                .orElseThrow(() -> new ResourceNotFoundException("Employee does not exists with given id: " + employeeId));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException("Employee does not exists with given id: " + employeeId)
+                );
 
         return EmployeeMapper.mapToEmployeeDto(employee);
     }
@@ -43,5 +45,25 @@ public class EmployeeServiceImpl implements EmployeeService {
         List<Employee> employees = employeeRepository.findAll();
         return employees.stream().map(EmployeeMapper::mapToEmployeeDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public EmployeeDto updateEmployee(Long employeeId, EmployeeDto updatedEmployeeDto) throws ResourceNotFoundException {
+
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(
+                () -> new ResourceNotFoundException("Employee does not exists with given id: " + employeeId)
+        );
+
+        employee.setFirstName(updatedEmployeeDto.getFirstName());
+        employee.setLastName(updatedEmployeeDto.getLastName());
+        employee.setEmail(updatedEmployeeDto.getEmail());
+        employee.setDateOfBirth(updatedEmployeeDto.getDateOfBirth());
+        employee.setPhone(updatedEmployeeDto.getPhone());
+        employee.setGender(updatedEmployeeDto.getGender());
+        employee.setDateOfJoining(updatedEmployeeDto.getDateOfJoining());
+
+        Employee updatedEmployeeObject = employeeRepository.save(employee);
+
+        return EmployeeMapper.mapToEmployeeDto(updatedEmployeeObject);
     }
 }
